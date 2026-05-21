@@ -3,12 +3,19 @@ const pool = require("../../config/pool_conexoes");
 //objeto com funções de acesso ao SGBD
 const tarefasModel = {
     //funções para usar o SQL
-    findAll: async ()=>{
-        try{
-            const [linhas] = await pool.query("select * from tarefas where status_tarefa = 1");
+    findAll: async (offset = null, qtde = null) => {
+        try {
+            if(offset != null   && qtde != null){
+                //limit
+                var [linhas] = await pool.query("select * from tarefas where status_tarefa = 1 limit ?,?",[offset, qtde]);
+            }else{
+                // select full
+                var [linhas] = await pool.query("select * from tarefas where status_tarefa = 1");
+            }
+
             return linhas;
-        }catch(erro){
-            return erro;
+        } catch (erro) {
+            throw erro;
         }
     },
     
@@ -20,6 +27,16 @@ const tarefasModel = {
             );
             return linhas;
         }catch(erro){
+            throw erro;
+        }
+    },
+
+    totalReg: async () => {
+        try {
+            const [linhas] = await pool.query(
+                "select count(*) as tot from tarefas where status_tarefa = 1");
+            return linhas[0].tot;
+        } catch (erro) {
             return erro;
         }
     },

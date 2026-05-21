@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> Home - Lista Tarefas</title>
+    <link rel="stylesheet" href="css/estilo.css">
 </head>
 
 <body>
@@ -26,7 +27,7 @@
         </thead>
         <tbody>
 
-            <% if(listaTarefas){ 
+            <% if(Array.isArray(listaTarefas) && listaTarefas.length > 0){ 
                 let situacao = ["Cancelada","Pendente","Iniciada","Finalizada","Em Atraso"]
                 listaTarefas.forEach( (item)=>{
                     %>
@@ -35,24 +36,54 @@
                     <td><%= item.nome_tarefa %></td>
                     <td><%= moment(item.prazo_tarefa).format('L') %></td>
                     <td><%= situacao[item.situacao_tarefa] %></td>
-                    <td>
-                    <a href="/editar?id=<%= item.id_tarefa %>">Editar</a> |
-    
+                    <td><a href="/editar?id=<%= item.id_tarefa %>">Editar</a>
+                    
                     <a href="/excluir?id=<%= item.id_tarefa %>" 
                     onclick="return confirm('Deseja realmente excluir esta tarefa?')">
                     Excluir
                     </a>
-                    </td>
+                </td>
                 </tr>
             <% 
                 });
-            }else{ %>
-                    <tr colspan="5">
-                        <td>Sem tarefas para exibir</td>
+            } else { %>
+                    <tr>
+                        <td colspan="5">Sem tarefas para exibir</td>
                     </tr>
             <% } %>
         </tbody>
     </table>
+
+    <%
+        if(notificador){
+            if(notificador.numPaginas > 1) {
+                %>
+                <nav>
+                    <ul>
+                        <%
+                        for(var i = 1; i <= notificador.numPaginas; i++ ){
+                            
+                            
+                            if(i == notificador.paginaAtual){
+                            %>   
+                             <li><a class="marcado" href="?pagina=<%=i%>"><%= i %></a></li>
+                            <%
+                            }else{
+                             %>   
+                                <li><a href="?pagina=<%=i%>"><%= i %></a></li>
+                             <%   
+                            }
+                            
+                        }
+                        %>
+                    </ul>                        
+                </nav>
+
+                <%
+            }
+        }
+    %>
+
 
 </body>
 

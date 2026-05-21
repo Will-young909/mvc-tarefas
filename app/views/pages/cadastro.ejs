@@ -1,24 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= tituloAba %></title>
+    <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
     
     <h1><%= tituloPagina %></h1>
+    <% if (typeof errors !== 'undefined' && errors.length > 0) { %>
+        <div style="border:1px solid red; padding: 12px; margin-bottom: 18px; background: #ffecec; color: #d8000c;">
+            <strong>Foram encontrados erros no formulário:</strong>
+            <ul>
+                <% errors.forEach(function(err){ %>
+                    <li><strong>*</strong><em><%= err.msg %></em></li><br>
+                <% }) %>
+            </ul>
+        </div>
+    <% } %>
     <form action="/manter-tarefa" method="post">
         <input type="hidden" name="id" id="id" value="<%= tarefa.id_tarefa %>">
         <label for="nome">Tarefa:</label><br>
         <input type="text" name="nome" id="nome" value="<%= tarefa.nome_tarefa %>"><br>
+        <% if (fieldErrors && fieldErrors.nome) { %>
+            <small style="color: red;"><%= fieldErrors.nome.msg %></small><br>
+        <% } %>
         <label for="prazo">Prazo:</label><br>
-        <input type="date" name="prazo" id="prazo" value="<%=  moment(tarefa.prazo_tarefa).format('YYYY-MM-DD')%>"><br>
+        <input type="date" name="prazo" id="prazo" value="<%= tarefa.prazo_tarefa ? moment(tarefa.prazo_tarefa).format('YYYY-MM-DD') : '' %>"><br>
+        <% if (fieldErrors && fieldErrors.prazo) { %>
+            <small style="color: red;"><%= fieldErrors.prazo.msg %></small><br>
+        <% } %>
         <label for="situacao">Situação:</label><br>
         <% 
             let situacao = ["","","","",""];
-            situacao[tarefa.situacao_tarefa] = "selected";
-        
+            situacao[parseInt(tarefa.situacao_tarefa, 10)] = "selected";
         %>
         
         <select name="situacao" id="situacao">
@@ -28,6 +44,9 @@
             <option <%= situacao[3] %> value="3">Finalizada</option>
             <option <%= situacao[4] %> value="4">Em atraso</option>
         </select><br>
+        <% if (fieldErrors && fieldErrors.situacao) { %>
+            <small style="color: red;"><%= fieldErrors.situacao.msg %></small><br>
+        <% } %>
         <button type="submit">Salvar</button>
     </form>
 
